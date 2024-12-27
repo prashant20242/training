@@ -1,6 +1,7 @@
 package com.cts.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import com.cts.entities.Employee;
@@ -14,10 +15,14 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     @Autowired
     private EmployeeRepository employeeRepository;
+    
+    @Autowired
+    private PasswordEncoder encoder;
 
     @Override
     public Employee saveEmployee(Employee employee) {
     	employee.setRole("ADMIN");
+    	employee.setPassword(encoder.encode(employee.getPassword()));
         return employeeRepository.save(employee);
     }
 
@@ -36,6 +41,10 @@ public class EmployeeServiceImpl implements EmployeeService {
     public Employee updateEmployee(Long id, Employee updatedEmployee) {
         return employeeRepository.findById(id).map(employee -> {
             employee.setName(updatedEmployee.getName());
+            employee.setEmail(updatedEmployee.getEmail());
+            employee.setPassword(encoder.encode(updatedEmployee.getPassword()));
+            employee.setPhone(updatedEmployee.getPhone());
+            employee.setAddress(updatedEmployee.getAddress());
             employee.setSalary(updatedEmployee.getSalary());
             return employeeRepository.save(employee);
         }).orElseThrow(() -> new ResourceNotFoundException("Employee not found with id: " + id));

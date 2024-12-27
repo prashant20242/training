@@ -1,6 +1,8 @@
 package com.cts.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import com.cts.entities.Customer;
@@ -12,6 +14,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/customers")
+@Validated
 public class CustomerController {
 
     @Autowired
@@ -23,6 +26,7 @@ public class CustomerController {
     }
 
     @GetMapping
+    @PreAuthorize("hasAuthority('ADMIN')")
     public List<Customer> getAllCustomers() {
         return customerService.getAllCustomers();
     }
